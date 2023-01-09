@@ -1,6 +1,7 @@
 package com.laowang.android01stapptabbed;
 
 import android.os.Bundle;
+import android.util.Log;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
@@ -9,12 +10,13 @@ import com.google.android.material.tabs.TabLayout;
 import androidx.viewpager.widget.ViewPager;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-
+import com.laowang.android01stapptabbed.entity.Result;
+import com.laowang.android01stapptabbed.entity.TokenUser;
+import com.laowang.android01stapptabbed.service.Login;
+import com.laowang.android01stapptabbed.service.Management;
 import com.laowang.android01stapptabbed.ui.main.SectionsPagerAdapter;
 import com.laowang.android01stapptabbed.databinding.ActivityMainBinding;
+
 /**
  * 主页面，安卓里 activity相当于页面
  */
@@ -31,6 +33,23 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         // 创建页面时，上来就上传状态
         super.onCreate(savedInstanceState);
+        // Android4.0以后不能在主线程里面进行网络连接，否则报错
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                binding.title.setText(R.string.tab_text_2);
+                binding.title.setText(R.string.tab_text_2);
+                Login login = Login.getInstance();
+                Result<TokenUser> submit = login.submit("0001", "123");
+                System.out.println(submit.getData().toString());
+                Result<TokenUser> result = Management.getInstance().changePassword("0001", "000", "123", "123");
+                System.out.println(result.getMsg());
+                System.out.println(result.getData());
+                Log.i("hahah",result.getMsg());
+                Log.i("heheh",result.getData().toString());
+            }
+        });
+
         // 多形象啊，inflate，充气（成型），初始化 视图的捆绑对象
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         // 页面对象设置 内容视图（捆绑对象的根元素，由于捆绑的是activity_main.xml，而该XML文件的根元素是“交互布局”，
